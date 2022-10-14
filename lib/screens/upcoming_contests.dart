@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/contests.dart';
 
 class UpcomingContests extends StatelessWidget {
   static const routeName = 'upcoming-contest';
@@ -12,8 +15,15 @@ class UpcomingContests extends StatelessWidget {
         title: const Text('Upcoming Contest'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: const Center(
-        child: Text('Dummy Text'),
+      body: Center(
+        child: Consumer<Contests>(
+          builder: (ctx, contests, _) => FlatButton(
+            onPressed: contests.fetchListandUpdate,
+            child: const Text(
+              'Fetch Data',
+            ),
+          ),
+        ),
       ),
     );
   }
