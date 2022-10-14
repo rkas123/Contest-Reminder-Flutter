@@ -23,16 +23,19 @@ class Contests with ChangeNotifier {
       final data = await http.get(url);
       final contestsData = json.decode(data.body)['data'].toList();
 
-      var updatedList = contestsData.map((ele) {
-        return Contest(
+      List<Contest> updatedList = [];
+      contestsData.forEach((ele) {
+        updatedList.add(Contest(
           duration: ele['duration'],
           end: ele['end'],
           start: ele['start'],
           href: ele['href'],
           id: ele['id'],
           iconurl: ele['resource']['icon'],
-        );
-      }).toList();
+          event: ele['event'],
+        ));
+      });
+
       _list = updatedList;
       notifyListeners();
     } catch (error) {

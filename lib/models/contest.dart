@@ -10,6 +10,7 @@ class Contest {
   final String href;
   final String iconurl;
   final int id;
+  final String event;
 
   Contest({
     required this.duration,
@@ -18,5 +19,6 @@ class Contest {
     required this.href,
     required this.iconurl,
     required this.id,
+    required this.event,
   });
 }
