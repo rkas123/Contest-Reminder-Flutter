@@ -5,8 +5,8 @@
 
 class Contest {
   final int duration;
-  final String end;
-  final String start;
+  final DateTime end;
+  final DateTime start;
   final String href;
   final String iconurl;
   final int id;

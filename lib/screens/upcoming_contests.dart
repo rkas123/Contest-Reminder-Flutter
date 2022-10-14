@@ -15,6 +15,7 @@ class UpcomingContests extends StatefulWidget {
 }
 
 class _UpcomingContestsState extends State<UpcomingContests> {
+  //initial loader will be used to fetch data when the widget becomes a part of widget tree
   var _initalLoadingCompleted = false;
 
   Future<void> _refreshContest(BuildContext context) async {
@@ -26,12 +27,13 @@ class _UpcomingContestsState extends State<UpcomingContests> {
 
   @override
   void didChangeDependencies() {
+    //check whether inital loading has happended or
+    //we need this check because, didChangeDependencies run multiple times
     if (!_initalLoadingCompleted) {
       Provider.of<Contests>(
         context,
         listen: false,
       ).fetchListandUpdate().then((_) {
-        print('done fetching');
         setState(() {
           _initalLoadingCompleted = true;
         });
@@ -44,10 +46,12 @@ class _UpcomingContestsState extends State<UpcomingContests> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        title: const Text('Upcoming Contest'),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Upcoming Contest'),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      // ),
+
+      //render custom loader while inital loading
       body: (!_initalLoadingCompleted)
           ? const CustomLoader(text: 'Fetching data...')
           : Consumer<Contests>(

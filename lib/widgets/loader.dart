@@ -14,7 +14,12 @@ class CustomLoader extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Text(text),
+          Text(
+            text,
+            style: TextStyle(
+              color: Theme.of(context).accentColor,
+            ),
+          ),
         ],
       ),
     );

@@ -25,12 +25,14 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
-          primaryColor: hexcolor.HexColor('3F72AF'),
-          backgroundColor: hexcolor.HexColor('DBE2EF'),
+          primaryColor: hexcolor.HexColor('112D4E'),
+          backgroundColor: hexcolor.HexColor('112D4E'),
+          canvasColor: hexcolor.HexColor('3F72AF'),
+          accentColor: hexcolor.HexColor('DBE2EF'),
         ),
         routes: {
-          '/': (ctx) => UpcomingContests(),
-          UpcomingContests.routeName: (ctx) => UpcomingContests(),
+          '/': (ctx) => const UpcomingContests(),
+          UpcomingContests.routeName: (ctx) => const UpcomingContests(),
         },
       ),
     );

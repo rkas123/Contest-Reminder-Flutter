@@ -27,8 +27,8 @@ class Contests with ChangeNotifier {
       contestsData.forEach((ele) {
         updatedList.add(Contest(
           duration: ele['duration'],
-          end: ele['end'],
-          start: ele['start'],
+          end: DateTime.parse(ele['end']),
+          start: DateTime.parse(ele['start']),
           href: ele['href'],
           id: ele['id'],
           iconurl: ele['resource']['icon'],
@@ -42,5 +42,11 @@ class Contests with ChangeNotifier {
       // TODO Add error handling
       print(error);
     }
+  }
+
+  void delete(int id) {
+    _list.removeWhere((element) => element.id == id);
+    print('deleted');
+    notifyListeners();
   }
 }
