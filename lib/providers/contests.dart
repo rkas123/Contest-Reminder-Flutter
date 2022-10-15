@@ -10,12 +10,17 @@ class Contests with ChangeNotifier {
   //Data fetched from API is modified and stored in '_list'
   List<Contest> _list = [];
 
+  //Boolean to check if we have called API atleast once
+  bool fetchedOnce = false;
+
   //returns a copy of contests
   //Don't return the reference to the contests as changes in listeners can manipulate the provider state
   List<Contest> get list {
     return [..._list];
   }
 
+  //Fetches a list of upcoming contests
+  //Should run on page reload and intial render
   Future<void> fetchListandUpdate() async {
     // TODO Add file for global constants and import from there
     final url = Uri.parse('https://codeforces-compar.herokuapp.com/list');
@@ -44,9 +49,18 @@ class Contests with ChangeNotifier {
     }
   }
 
+  //Called when switch to UpcomingContest tab and also on the initial render.
+  Future<void> tabSwitch() async {
+    if (fetchedOnce) {
+      return;
+    }
+    await fetchListandUpdate();
+    fetchedOnce = true;
+  }
+
+  // Remove a contest from the state's list of contests.
   void delete(int id) {
     _list.removeWhere((element) => element.id == id);
-    print('deleted');
     notifyListeners();
   }
 }

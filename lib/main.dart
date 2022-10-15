@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import './helper/hex_color.dart' as hexcolor;
 
 import './screens/upcoming_contests.dart';
+import './screens/notif_contests.dart';
+import './screens/tabs_screen.dart';
 
 import './providers/contests.dart';
+import './providers/notifs.dart';
 
 void main() => runApp(MyApp());
 
@@ -22,6 +25,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (ctx) => Contests()),
+        ChangeNotifierProvider(create: (ctx) => NotifContest())
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -31,8 +35,10 @@ class MyApp extends StatelessWidget {
           accentColor: hexcolor.HexColor('DBE2EF'),
         ),
         routes: {
-          '/': (ctx) => const UpcomingContests(),
+          '/': (ctx) => const TabsScreen(),
           UpcomingContests.routeName: (ctx) => const UpcomingContests(),
+          NotifContestScreen.routeName: (ctx) => const NotifContestScreen(),
+          TabsScreen.routeName: (ctx) => const TabsScreen(),
         },
       ),
     );

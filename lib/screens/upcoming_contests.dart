@@ -6,6 +6,9 @@ import '../providers/contests.dart';
 import '../widgets/upcoming_contest.dart';
 import '../widgets/loader.dart';
 
+//SCREEN INFO
+//This screen renders the list of Upcoming Contests
+//Before rendering, we make an API call and after receiving data, we render it.
 class UpcomingContests extends StatefulWidget {
   static const routeName = 'upcoming-contest';
   const UpcomingContests({Key? key}) : super(key: key);
@@ -15,7 +18,7 @@ class UpcomingContests extends StatefulWidget {
 }
 
 class _UpcomingContestsState extends State<UpcomingContests> {
-  //initial loader will be used to fetch data when the widget becomes a part of widget tree
+  //Initial loader will be used to fetch data when the widget becomes a part of widget tree
   var _initalLoadingCompleted = false;
 
   Future<void> _refreshContest(BuildContext context) async {
@@ -27,13 +30,17 @@ class _UpcomingContestsState extends State<UpcomingContests> {
 
   @override
   void didChangeDependencies() {
-    //check whether inital loading has happended or
-    //we need this check because, didChangeDependencies run multiple times
+    //check whether inital loading has happended or not
+    //This check is needed because, didChangeDependencies runs multiple times
+
+    //NOTE: We can't use async await here, because didChangeDependencies is an inbuilt function
+    //Can not convert it to an async function
+    //Forced to used .then() and .catch(error)
     if (!_initalLoadingCompleted) {
       Provider.of<Contests>(
         context,
         listen: false,
-      ).fetchListandUpdate().then((_) {
+      ).tabSwitch().then((_) {
         setState(() {
           _initalLoadingCompleted = true;
         });
