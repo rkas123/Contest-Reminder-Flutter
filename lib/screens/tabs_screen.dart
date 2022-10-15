@@ -43,7 +43,7 @@ class _TabsScreenState extends State<TabsScreen> {
         currentIndex: _selectedPageIndex,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.category), label: 'Upcoming'),
+              icon: Icon(Icons.upcoming_rounded), label: 'Upcoming'),
           BottomNavigationBarItem(
               icon: Icon(Icons.notifications_active), label: 'Notifications'),
         ],

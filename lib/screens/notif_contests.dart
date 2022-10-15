@@ -5,6 +5,8 @@ import '../providers/notifs.dart';
 
 import '../widgets/notif_contest.dart';
 
+//SCREEN INFO
+//Renders the list of <Contest> user wants to be notified for.
 class NotifContestScreen extends StatelessWidget {
   static const routeName = '/notif-contests';
   const NotifContestScreen({Key? key}) : super(key: key);
@@ -16,6 +18,7 @@ class NotifContestScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: const Text('Notifications'),
+        backgroundColor: Theme.of(context).canvasColor,
         actions: [
           IconButton(
             onPressed: () {},

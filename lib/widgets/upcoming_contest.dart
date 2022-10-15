@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/contest.dart';
 
 import '../helper/date_helper.dart';
 
+import '../widgets/dialog.dart' as helperDialog;
+
 import '../providers/contests.dart';
+import '../providers/notifs.dart';
 
 class UpcomingContestItem extends StatefulWidget {
   final Contest contest;
@@ -25,18 +29,53 @@ class _UpcomingContestItemState extends State<UpcomingContestItem> {
         switch (direction) {
           case DismissDirection.endToStart:
             {
-              // TODO : Add to Notification list.
+              Provider.of<NotifContest>(context, listen: false)
+                  .addContest(widget.contest);
+              Provider.of<Contests>(context, listen: false)
+                  .delete(widget.contest.id);
+              Fluttertoast.showToast(msg: 'Added');
+
               break;
             }
           case DismissDirection.startToEnd:
             {
               Provider.of<Contests>(context, listen: false)
                   .delete(widget.contest.id);
+              Fluttertoast.showToast(msg: 'Deleted');
               break;
             }
           default:
             {
               // do nothing
+            }
+        }
+      },
+      confirmDismiss: (direction) {
+        switch (direction) {
+          case DismissDirection.endToStart:
+            {
+              return showDialog(
+                context: context,
+                builder: (ctx) => helperDialog.Dialog(
+                  title: 'Confirming...',
+                  content:
+                      'You will receive a notification for this contest on ${widget.contest.start}',
+                ),
+              );
+            }
+          case DismissDirection.startToEnd:
+            {
+              return showDialog(
+                context: context,
+                builder: (ctx) => const helperDialog.Dialog(
+                  title: 'Confirm Delete',
+                  content: 'Are you sure you want to delete this contest?',
+                ),
+              );
+            }
+          default:
+            {
+              return Future.value(true);
             }
         }
       },
