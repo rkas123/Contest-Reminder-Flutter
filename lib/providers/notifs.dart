@@ -22,8 +22,6 @@ class NotifContest with ChangeNotifier {
 
   //Deletes a <Contest> from id, from the list of <Contest>
   void delete(int id) {
-    print('here');
-    print(id);
     _list.removeWhere((element) => element.id == id);
     notifyListeners();
   }

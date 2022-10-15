@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+//Helper dialog class which accepts title and content
+//Reusable widget
+//NOTE: In future, add more fields via constructor for placeholder of button texts
 class Dialog extends StatelessWidget {
   final String title;
   final String content;

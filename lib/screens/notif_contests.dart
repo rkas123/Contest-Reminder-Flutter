@@ -19,6 +19,7 @@ class NotifContestScreen extends StatelessWidget {
         title: const Text('Notifications'),
         backgroundColor: Theme.of(context).canvasColor,
         actions: [
+          //Action button to clear all the notifications.
           IconButton(
             onPressed: () {
               Provider.of<NotifContest>(context, listen: false).clearList();
@@ -30,6 +31,7 @@ class NotifContestScreen extends StatelessWidget {
         ],
       ),
       body: Consumer<NotifContest>(
+        //Render placeholder data when there is nothing to show.
         builder: (ctx, notifContests, _) => (notifContests.list.isEmpty)
             ? Center(
                 child: Text(
