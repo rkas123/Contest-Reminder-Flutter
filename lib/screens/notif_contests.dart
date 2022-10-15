@@ -13,7 +13,6 @@ class NotifContestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifContests = Provider.of<NotifContest>(context);
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
@@ -21,18 +20,32 @@ class NotifContestScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).canvasColor,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<NotifContest>(context, listen: false).clearList();
+            },
             icon: const Icon(
               Icons.delete_rounded,
             ),
           )
         ],
       ),
-      body: ListView.builder(
-        itemBuilder: (ctx, index) => NotifContestItem(
-          contest: notifContests.list[index],
-        ),
-        itemCount: notifContests.list.length,
+      body: Consumer<NotifContest>(
+        builder: (ctx, notifContests, _) => (notifContests.list.isEmpty)
+            ? Center(
+                child: Text(
+                  'Nothing to show',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Theme.of(context).accentColor,
+                  ),
+                ),
+              )
+            : ListView.builder(
+                itemBuilder: (ctx, index) => NotifContestItem(
+                  contest: notifContests.list[index],
+                ),
+                itemCount: notifContests.list.length,
+              ),
       ),
     );
   }
