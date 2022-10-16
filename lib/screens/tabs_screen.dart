@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './upcoming_contests.dart';
 import './notif_contests.dart';
+import './auth_screen.dart';
 
 //SCREEN INFO
 //This will be home page of the app
@@ -19,6 +20,7 @@ class _TabsScreenState extends State<TabsScreen> {
   final List<Widget> _pages = [
     const UpcomingContests(),
     const NotifContestScreen(),
+    const AuthScreen(),
   ];
 
   //The index of the current render tab
@@ -46,6 +48,8 @@ class _TabsScreenState extends State<TabsScreen> {
               icon: Icon(Icons.upcoming_rounded), label: 'Upcoming'),
           BottomNavigationBarItem(
               icon: Icon(Icons.notifications_active), label: 'Notifications'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.login_outlined), label: 'Authentication'),
         ],
       ),
       body: _pages[_selectedPageIndex],

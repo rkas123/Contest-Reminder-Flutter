@@ -6,6 +6,7 @@ import './helper/hex_color.dart' as hexcolor;
 import './screens/upcoming_contests.dart';
 import './screens/notif_contests.dart';
 import './screens/tabs_screen.dart';
+import './screens/auth_screen.dart';
 
 import './providers/contests.dart';
 import './providers/notifs.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           UpcomingContests.routeName: (ctx) => const UpcomingContests(),
           NotifContestScreen.routeName: (ctx) => const NotifContestScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
+          AuthScreen.routeName: (ctx) => const AuthScreen(),
         },
       ),
     );
