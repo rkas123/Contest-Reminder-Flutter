@@ -16,6 +16,13 @@ class NotifContest with ChangeNotifier {
   void addContest(Contest contest) {
     //We want them most recently added contest on the top
     //TODO Sort by starting time in ascending order.
+
+    //Don't insert again if already present in the _list
+    for (int indx = 0; indx < _list.length; indx++) {
+      if (_list[indx].id == contest.id) {
+        return;
+      }
+    }
     _list.insert(0, contest);
     notifyListeners();
   }

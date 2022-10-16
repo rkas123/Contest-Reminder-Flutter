@@ -41,7 +41,7 @@ class Contests with ChangeNotifier {
         ));
       });
 
-      _list = updatedList;
+      _list = updatedList.sublist(0, 9);
       notifyListeners();
     } catch (error) {
       // TODO Add error handling
