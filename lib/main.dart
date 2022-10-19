@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import './helper/hex_color.dart' as hexcolor;
 
@@ -11,7 +12,11 @@ import './screens/auth_screen.dart';
 import './providers/contests.dart';
 import './providers/notifs.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 //COLOR Palettes
 //B7C4CF, EEE3CB, D7C0AE, 967E76

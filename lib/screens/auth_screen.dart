@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 //SCREEN INFO
 //This is the initial page of the application
 //This will be rendered before the Tabs Screen
@@ -33,6 +33,15 @@ class _AuthScreenState extends State<AuthScreen> {
 
   //Function executed when form is submitted
   void _saveForm() {
+    //Confirming we are getting data
+    final data = FirebaseFirestore.instance.collection('temporary');
+
+    data.doc('temp').get().then((value) {
+      print(value.data());
+    }).catchError((error) {
+      print(error.toString());
+    });
+
     //Validation
     //Each TextFormField will execute it's Validator
     final isValid = _formKey.currentState!.validate();
