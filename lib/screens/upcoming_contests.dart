@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../providers/contests.dart';
+import '../providers/auth_uid.dart';
 
 import '../widgets/upcoming_contest.dart';
 import '../widgets/loader.dart';
@@ -22,6 +24,9 @@ class UpcomingContests extends StatefulWidget {
 class _UpcomingContestsState extends State<UpcomingContests> {
   //Initial loader will be used to fetch data when the widget becomes a part of widget tree
   var _initalLoadingCompleted = false;
+
+  //Boolean to track username is fetched or not
+  var _getUsername = false;
 
   Future<void> _refreshContest(BuildContext context) async {
     return Provider.of<Contests>(
@@ -48,6 +53,34 @@ class _UpcomingContestsState extends State<UpcomingContests> {
         });
       });
     }
+
+    //Fetch the username from Firestore database
+    if (!_getUsername) {
+      final authListner = Provider.of<AuthUID>(context, listen: false);
+
+      //Already fetched before rendering this widget
+      if (authListner.fetchedOnce) {
+        setState(() {
+          _getUsername = true;
+        });
+        return;
+      }
+
+      //Uid will be set as TabScreen is rendered only when authentication has happended
+      final uid = authListner.uid;
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get()
+          .then((value) {
+        final dat = value.data() as Map<String, dynamic>;
+        authListner.setUsername(dat['username']);
+        authListner.setFetchedOnce(true);
+        setState(() {
+          _getUsername = true;
+        });
+      });
+    }
     super.didChangeDependencies();
   }
 
@@ -57,7 +90,12 @@ class _UpcomingContestsState extends State<UpcomingContests> {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
-        title: const Text('Hi'),
+        //Display the username in the appbar
+        title: Consumer<AuthUID>(
+          builder: (ctx, authState, _) => (authState.fetchedOnce)
+              ? Text('Welcome ${authState.username}')
+              : const Text('Finding your name...'),
+        ),
         actions: [
           DropdownButton(
               underline: Container(),
@@ -97,20 +135,26 @@ class _UpcomingContestsState extends State<UpcomingContests> {
                   ),
                 ),
               ],
-              onChanged: (itemIdentifier) async {
+              onChanged: (itemIdentifier) {
                 if (itemIdentifier == 'logout') {
-                  bool res = await showDialog(
+                  showDialog(
                     context: context,
                     builder: (context) => const dialog.Dialog(
                         title: 'Logging Out!',
                         content: 'Are you sure you want to logout?'),
-                  );
-
-                  //Show a dialog
-                  //Confirm user's intentions and then sign out
-                  if (res) {
-                    FirebaseAuth.instance.signOut();
-                  }
+                  ).then((res) {
+                    //Show a dialog
+                    //Confirm user's intentions and then sign out
+                    if (res) {
+                      FirebaseAuth.instance.signOut();
+                      final authListener =
+                          Provider.of<AuthUID>(context, listen: false);
+                      //Reflect appropriate changes in AuthUID Provider state
+                      authListener.setFetchedOnce(false);
+                      authListener.setUid('');
+                      authListener.setUsername('');
+                    }
+                  });
                 }
               })
         ],

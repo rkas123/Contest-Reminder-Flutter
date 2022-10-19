@@ -12,6 +12,7 @@ import './screens/auth_screen.dart';
 
 import './providers/contests.dart';
 import './providers/notifs.dart';
+import './providers/auth_uid.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (ctx) => Contests()),
-        ChangeNotifierProvider(create: (ctx) => NotifContest())
+        ChangeNotifierProvider(create: (ctx) => NotifContest()),
+        ChangeNotifierProvider(create: (ctx) => AuthUID()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -55,6 +57,11 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (ctx, userSnapshot) {
             if (userSnapshot.hasData) {
+              //Store the uid in a global state that can be accessed anywhere
+              //This is constantly updated, therefore don't use notifyListeners frequently
+              var sn = userSnapshot.data as User;
+              final authListener = Provider.of<AuthUID>(ctx, listen: false);
+              authListener.setUid(sn.uid);
               return const TabsScreen();
             }
             return const AuthScreen();
