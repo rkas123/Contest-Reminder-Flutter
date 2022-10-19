@@ -48,8 +48,6 @@ class _TabsScreenState extends State<TabsScreen> {
               icon: Icon(Icons.upcoming_rounded), label: 'Upcoming'),
           BottomNavigationBarItem(
               icon: Icon(Icons.notifications_active), label: 'Notifications'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.login_outlined), label: 'Authentication'),
         ],
       ),
       body: _pages[_selectedPageIndex],

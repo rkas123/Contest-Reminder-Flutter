@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+
 //SCREEN INFO
 //This is the initial page of the application
 //This will be rendered before the Tabs Screen
@@ -26,22 +29,20 @@ class _AuthScreenState extends State<AuthScreen> {
   //Form key
   final _formKey = GlobalKey<FormState>();
 
+  //Firebase_auth instance
+  final _auth = FirebaseAuth.instance;
+
   //Login Mode
   //No TextFormField for entering a username
   //Username is only required when signing up for the first time
   bool _loginMode = true;
 
+  //Loader state
+  //Display loader when awaiting for results from firebase/firestore
+  var _isLoading = false;
+
   //Function executed when form is submitted
-  void _saveForm() {
-    //Confirming we are getting data
-    final data = FirebaseFirestore.instance.collection('temporary');
-
-    data.doc('temp').get().then((value) {
-      print(value.data());
-    }).catchError((error) {
-      print(error.toString());
-    });
-
+  Future<void> _saveForm(BuildContext context) async {
     //Validation
     //Each TextFormField will execute it's Validator
     final isValid = _formKey.currentState!.validate();
@@ -49,6 +50,60 @@ class _AuthScreenState extends State<AuthScreen> {
       return;
     }
     _formKey.currentState!.save();
+
+    UserCredential _userCredential;
+
+    //Show loader
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      if (_loginMode) {
+        _userCredential = await _auth.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+      } else {
+        _userCredential = await _auth.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+        //Storing the username for the corresponding email id
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_userCredential.user!.uid)
+            .set({
+          'username': _usernameController.text,
+          'email': _emailController.text,
+        });
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    } on PlatformException catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      //Handle errors that are sent by Firebase
+      var message = 'An error occured from Firebase';
+
+      if (error.message != null) {
+        message = error.message!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      //Handle other errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    }
   }
 
   @override
@@ -142,7 +197,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   //password
                   TextFormField(
                     validator: (value) {
-                      if (value!.length < 7) {
+                      if (value!.length < 6) {
                         return 'Password must be atleast 6 characters.';
                       }
                       return null;
@@ -174,18 +229,20 @@ class _AuthScreenState extends State<AuthScreen> {
                       primary: Theme.of(context).primaryColor,
                       onPrimary: Theme.of(context).accentColor,
                     ),
-                    onPressed: _saveForm,
+                    onPressed: () => _saveForm(context),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 10,
                         horizontal: 4,
                       ),
-                      child: Text(
-                        (!_loginMode) ? 'Sign Up' : 'Login',
-                        style: const TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
+                      child: (_isLoading)
+                          ? const CircularProgressIndicator()
+                          : Text(
+                              (!_loginMode) ? 'Sign Up' : 'Login',
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
                     ),
                   ),
 

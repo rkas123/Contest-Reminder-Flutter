@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../providers/contests.dart';
 
 import '../widgets/upcoming_contest.dart';
 import '../widgets/loader.dart';
+import '../widgets/dialog.dart' as dialog;
 
 //SCREEN INFO
 //This screen renders the list of Upcoming Contests
@@ -53,10 +55,66 @@ class _UpcomingContestsState extends State<UpcomingContests> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      // appBar: AppBar(
-      //   title: const Text('Upcoming Contest'),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      // ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).canvasColor,
+        title: const Text('Hi'),
+        actions: [
+          DropdownButton(
+              underline: Container(),
+              icon: Padding(
+                padding: const EdgeInsets.only(
+                  right: 15,
+                  top: 8,
+                ),
+                child: Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+              items: [
+                //Logout button
+                //The change of page is managed by StreamBuilder in main.dart
+                DropdownMenuItem(
+                  value: 'logout',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Theme.of(context).accentColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Icon(
+                        Icons.exit_to_app,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (itemIdentifier) async {
+                if (itemIdentifier == 'logout') {
+                  bool res = await showDialog(
+                    context: context,
+                    builder: (context) => const dialog.Dialog(
+                        title: 'Logging Out!',
+                        content: 'Are you sure you want to logout?'),
+                  );
+
+                  //Show a dialog
+                  //Confirm user's intentions and then sign out
+                  if (res) {
+                    FirebaseAuth.instance.signOut();
+                  }
+                }
+              })
+        ],
+      ),
 
       //render custom loader while inital loading
       body: (!_initalLoadingCompleted)

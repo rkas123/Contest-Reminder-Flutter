@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import './helper/hex_color.dart' as hexcolor;
 
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx) => NotifContest())
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: hexcolor.HexColor('112D4E'),
           backgroundColor: hexcolor.HexColor('112D4E'),
@@ -41,12 +43,23 @@ class MyApp extends StatelessWidget {
           accentColor: hexcolor.HexColor('DBE2EF'),
         ),
         routes: {
-          '/': (ctx) => const TabsScreen(),
           UpcomingContests.routeName: (ctx) => const UpcomingContests(),
           NotifContestScreen.routeName: (ctx) => const NotifContestScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
           AuthScreen.routeName: (ctx) => const AuthScreen(),
         },
+
+        //Set up a stream builder to handle the auth state
+        //This changes the screen rendered whenever the auth state changes
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, userSnapshot) {
+            if (userSnapshot.hasData) {
+              return const TabsScreen();
+            }
+            return const AuthScreen();
+          },
+        ),
       ),
     );
   }
