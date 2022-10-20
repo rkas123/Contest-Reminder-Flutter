@@ -67,10 +67,11 @@ class _UpcomingContestsState extends State<UpcomingContests> {
       }
 
       //Uid will be set as TabScreen is rendered only when authentication has happended
-      final uid = authListner.uid;
+      //REVERTED! instead of using the AuthUID provider, extract uid from FirebaseAuth instance
+      final userCreds = FirebaseAuth.instance.currentUser;
       FirebaseFirestore.instance
           .collection('users')
-          .doc(uid)
+          .doc(userCreds!.uid)
           .get()
           .then((value) {
         final dat = value.data() as Map<String, dynamic>;
